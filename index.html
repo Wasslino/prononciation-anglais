@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prononciation anglaise — LinguaLink</title>
+<meta name="description" content="Entraîne ta prononciation anglaise : lis une phrase à voix haute, l'application te dit si les mots ont été compris. Accent américain ou britannique. Gratuit, sans compte.">
+<style>
+  :root{
+    --navy:#0f2a4a; --navy2:#16395f; --gold:#d4a017; --gold2:#b8890f;
+    --cream:#faf7f0; --card:#ffffff; --ink:#1f2a37; --muted:#6b7280;
+    --green:#1e7d4f; --greenbg:#dcf5e5; --amber:#8a5a00; --amberbg:#fdf0d0;
+    --red:#a4262c; --redbg:#fde4e4; --line:#e5e0d5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5}
+  header{background:var(--navy);color:#fff;padding:22px 16px 20px;text-align:center;border-bottom:4px solid var(--gold)}
+  header .brand{font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  header h1{margin:6px 0 4px;font-size:1.55rem;line-height:1.25}
+  header p{margin:0;color:#cdd8e4;font-size:.95rem}
+  main{max-width:640px;margin:0 auto;padding:16px 14px 40px}
+  .howto{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+  .howto h2{margin:0 0 8px;font-size:1rem;color:var(--navy)}
+  .howto ol{margin:0;padding-left:20px}
+  .howto li{margin:4px 0;font-size:.95rem}
+  .accent-row{display:flex;gap:10px;margin-bottom:14px}
+  .accent-btn{flex:1;padding:13px 8px;border:2px solid var(--line);background:var(--card);border-radius:12px;font-size:1.02rem;font-weight:700;color:var(--ink);cursor:pointer}
+  .accent-btn small{display:block;font-weight:400;color:var(--muted);font-size:.8rem;margin-top:2px}
+  .accent-btn.active{border-color:var(--gold);background:#fff8e1;box-shadow:0 0 0 2px rgba(212,160,23,.25)}
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{flex:1;padding:11px 6px;border:1px solid var(--line);background:var(--card);border-radius:10px;font-size:.92rem;font-weight:600;color:var(--ink);cursor:pointer}
+  .tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chip-filter{padding:8px 14px;border:1px solid var(--line);background:var(--card);border-radius:999px;font-size:.88rem;cursor:pointer}
+  .chip-filter.active{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;box-shadow:0 2px 10px rgba(15,42,74,.06)}
+  .card .cat{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold2);font-weight:700;margin:0 0 8px}
+  .sentence{font-size:1.45rem;line-height:1.4;margin:0 0 6px;color:var(--navy);font-weight:600}
+  .tip{font-size:.92rem;color:var(--muted);margin:0 0 16px}
+  .tip b{color:var(--ink)}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{flex:1;min-width:140px;padding:14px 10px;border:none;border-radius:12px;font-size:1.02rem;font-weight:700;cursor:pointer}
+  .btn-listen{background:var(--navy);color:#fff}
+  .btn-mic{background:var(--gold);color:#fff}
+  .btn-mic.listening{background:var(--red);animation:pulse 1.1s infinite}
+  @keyframes pulse{0%{opacity:1}50%{opacity:.6}100%{opacity:1}}
+  .btn-ghost{background:#eef1f4;color:var(--navy)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .nav-row{display:flex;gap:10px;margin-top:14px}
+  .nav-row .btn{flex:1;min-width:0}
+  .progress{font-size:.85rem;color:var(--muted);text-align:center;margin:12px 0 0}
+  .result{margin-top:18px;border-top:1px dashed var(--line);padding-top:16px;display:none}
+  .result.show{display:block}
+  .heard{font-size:.95rem;margin:0 0 10px}
+  .heard b{color:var(--navy)}
+  .word-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+  .word{padding:6px 11px;border-radius:999px;font-size:1rem;font-weight:600}
+  .word.ok{background:var(--greenbg);color:var(--green)}
+  .word.close{background:var(--amberbg);color:var(--amber)}
+  .word.miss{background:var(--redbg);color:var(--red);text-decoration:underline dotted}
+  .score-bar{height:12px;background:#eee;border-radius:999px;overflow:hidden;margin-bottom:8px}
+  .score-fill{height:100%;background:var(--green);border-radius:999px;transition:width .4s}
+  .score-line{font-size:.95rem;font-weight:700;color:var(--navy);margin:0 0 4px}
+  .encourage{font-size:.95rem;margin:0}
+  .legend{font-size:.82rem;color:var(--muted);margin:10px 0 0}
+  .alert{background:var(--redbg);color:var(--red);border-radius:10px;padding:11px 13px;font-size:.92rem;margin-top:14px;display:none}
+  .alert.show{display:block}
+  .pair-words{display:flex;gap:10px;margin-bottom:12px}
+  .pair-word{flex:1;padding:16px 8px;border:2px solid var(--line);background:var(--card);border-radius:12px;font-size:1.35rem;font-weight:700;color:var(--navy);cursor:pointer;text-align:center}
+  .pair-word.active{border-color:var(--gold);background:#fff8e1}
+  textarea{width:100%;min-height:130px;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:1rem;font-family:inherit;resize:vertical}
+  .note{font-size:.85rem;color:var(--muted);margin-top:20px;text-align:center;padding:0 8px}
+  footer{text-align:center;padding:18px 14px 30px;color:var(--muted);font-size:.85rem}
+  footer b{color:var(--navy)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">LinguaLink</div>
+  <h1>🎤 Prononciation anglaise</h1>
+  <p>Lis à voix haute, l'application te dit si on t'a compris.</p>
+</header>
+
+<main>
+  <div class="howto">
+    <h2>Comment ça marche ?</h2>
+    <ol>
+      <li>Choisis ton accent : <b>américain</b> ou <b>britannique</b>.</li>
+      <li>Écoute le modèle, puis appuie sur <b>🎤 Lire à voix haute</b> et lis la phrase.</li>
+      <li>Les mots <b style="color:var(--green)">verts</b> ont été compris, les mots <b style="color:var(--red)">rouges</b> sont à retravailler.</li>
+    </ol>
+  </div>
+
+  <div class="accent-row" role="group" aria-label="Choix de l'accent">
+    <button class="accent-btn active" id="btnUS" type="button">🇺🇸 Américain<small>General American</small></button>
+    <button class="accent-btn" id="btnUK" type="button">🇬🇧 Britannique<small>Received Pronunciation</small></button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tabPhrases" type="button">📖 Phrases</button>
+    <button class="tab" id="tabPaires" type="button">🔀 Paires minimales</button>
+    <button class="tab" id="tabTexte" type="button">✍️ Mon texte</button>
+  </div>
+
+  <!-- MODE PHRASES -->
+  <section id="modePhrases">
+    <div class="filters" id="filters">
+      <button class="chip-filter active" data-filter="all" type="button">Toutes</button>
+      <button class="chip-filter" data-filter="sons" type="button">Les 5 sons</button>
+      <button class="chip-filter" data-filter="communication" type="button">Communication</button>
+      <button class="chip-filter" data-filter="bac" type="button">Bac &amp; idiomes</button>
+    </div>
+    <div class="card">
+      <p class="cat" id="phraseCat"></p>
+      <p class="sentence" id="phraseText"></p>
+      <p class="tip" id="phraseTip"></p>
+      <div class="btn-row">
+        <button class="btn btn-listen" id="btnListen" type="button">🔊 Écouter le modèle</button>
+        <button class="btn btn-mic" id="btnMic" type="button">🎤 Lire à voix haute</button>
+      </div>
+      <div class="result" id="result">
+        <p class="heard">Tu as dit : <b id="heardText"></b></p>
+        <div class="word-chips" id="wordChips"></div>
+        <div class="score-bar"><div class="score-fill" id="scoreFill"></div></div>
+        <p class="score-line" id="scoreLine"></p>
+        <p class="encourage" id="encourage"></p>
+        <p class="legend">🟢 compris &nbsp; 🟡 presque &nbsp; 🔴 à retravailler</p>
+      </div>
+      <div class="alert" id="alert"></div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btnPrev" type="button">← Précédente</button>
+        <button class="btn btn-ghost" id="btnNext" type="button">Suivante →</button>
+      </div>
+      <p class="progress" id="progress"></p>
+    </div>
+  </section>
+
+  <!-- MODE PAIRES MINIMALES -->
+  <section id="modePaires" style="display:none">
+    <div class="card">
+      <p class="cat">Paire minimale — un seul son change le mot</p>
+      <div class="pair-words">
+        <button class="pair-word active" id="pairA" type="button"></button>
+        <button class="pair-word" id="pairB" type="button"></button>
+      </div>
+      <p class="tip" id="pairTip"></p>
+      <div class="btn-row">
+        <button class="btn btn-listen" id="btnListenPair" type="button">🔊 Écouter le modèle</button>
+        <button class="btn btn-mic" id="btnMicPair" type="button">🎤 Dire le mot</button>
+      </div>
+      <div class="result" id="resultPair">
+        <p class="heard">L'application a entendu : <b id="heardPair"></b></p>
+        <p class="score-line" id="scorePair"></p>
+        <p class="encourage" id="encouragePair"></p>
+      </div>
+      <div class="alert" id="alertPair"></div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btnPrevPair" type="button">← Précédente</button>
+        <button class="btn btn-ghost" id="btnNextPair" type="button">Suivante →</button>
+      </div>
+      <p class="progress" id="progressPair"></p>
+    </div>
+  </section>
+
+  <!-- MODE MON TEXTE -->
+  <section id="modeTexte" style="display:none">
+    <div class="card" id="textEditor">
+      <p class="cat">Ton propre texte en anglais</p>
+      <p class="tip">Colle ou écris n'importe quel texte en anglais : un paragraphe du Bac, une présentation, une chanson… La page le découpe en phrases, et tu t'entraînes phrase par phrase.</p>
+      <textarea id="customText" placeholder="Example: Education is the key to success. Every student should practise English every day."></textarea>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-mic" id="btnStartCustom" type="button" style="background:var(--navy)">▶ Commencer l'entraînement</button>
+      </div>
+    </div>
+    <div class="card" id="textPractice" style="display:none">
+      <p class="cat">Ton texte — phrase par phrase</p>
+      <p class="sentence" id="customPhrase"></p>
+      <div class="btn-row">
+        <button class="btn btn-listen" id="btnListenCustom" type="button">🔊 Écouter le modèle</button>
+        <button class="btn btn-mic" id="btnMicCustom" type="button">🎤 Lire à voix haute</button>
+      </div>
+      <div class="result" id="resultCustom">
+        <p class="heard">Tu as dit : <b id="heardCustom"></b></p>
+        <div class="word-chips" id="wordChipsCustom"></div>
+        <div class="score-bar"><div class="score-fill" id="scoreFillCustom"></div></div>
+        <p class="score-line" id="scoreLineCustom"></p>
+        <p class="encourage" id="encourageCustom"></p>
+      </div>
+      <div class="alert" id="alertCustom"></div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btnPrevCustom" type="button">← Précédente</button>
+        <button class="btn btn-ghost" id="btnNextCustom" type="button">Suivante →</button>
+      </div>
+      <p class="progress" id="progressCustom"></p>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btnEditText" type="button">✏️ Modifier le texte</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="note">💡 Pour un meilleur résultat : endroit calme, parle clairement, tiens le téléphone à environ 20 cm. Cette page utilise la reconnaissance vocale de Chrome — l'audio est envoyé à Google pour être transcrit, et le résultat montre si les mots ont été compris. Ce n'est pas une correction son par son comme ELSA Speak. Ouvre cette page dans <b>Chrome</b> (Android ou ordinateur) pour que le micro fonctionne.</p>
+</main>
+
+<footer><b>LinguaLink</b> — Entraînement de prononciation anglaise · Gratuit, sans compte</footer>
+
+<script>
+"use strict";
+
+/* ---------- Données ---------- */
+var PHRASES = [
+  {cat:"sons", catLabel:"Les 5 sons — TH", text:"I think this thing is the best.", tip:"<b>TH :</b> mets le bout de la langue entre les dents et souffle doucement."},
+  {cat:"sons", catLabel:"Les 5 sons — TH + R", text:"Three thin brothers think about the weather.", tip:"Deux sons difficiles dans une seule phrase. Va lentement, un mot après l'autre."},
+  {cat:"sons", catLabel:"Les 5 sons — H", text:"He has a happy home.", tip:"<b>H :</b> un petit souffle, comme si tu voulais faire de la buée sur une vitre."},
+  {cat:"sons", catLabel:"Les 5 sons — R", text:"The red car is really fast.", tip:"<b>R anglais :</b> la langue ne touche pas le palais, elle reste en arrière."},
+  {cat:"sons", catLabel:"Les 5 sons — R", text:"Robert reads a story every Friday.", tip:"Ne roule pas le R comme en français ou en arabe."},
+  {cat:"sons", catLabel:"Les 5 sons — voyelles", text:"This ship is big and quick.", tip:"<b>Ship :</b> /ɪ/ court et détendu."},
+  {cat:"sons", catLabel:"Les 5 sons — voyelles", text:"The sheep sleeps in the green field.", tip:"<b>Sheep :</b> /iː/ long, avec un sourire."},
+  {cat:"sons", catLabel:"Les 5 sons — terminaisons", text:"She works, plays and watches TV every day.", tip:"Le <b>-s</b> final se prononce toujours : works, plays."},
+  {cat:"sons", catLabel:"Les 5 sons — terminaisons", text:"Yesterday she walked, talked and watched a film.", tip:"<b>-ed</b> après k, p, f ou s : ça sonne /t/ — walked = /wɔːkt/."},
+  {cat:"communication", catLabel:"Communication — se présenter", text:"Hello, my name is Sara. I am a teacher.", tip:"Présente-toi : nom, métier. Parle lentement et clairement."},
+  {cat:"communication", catLabel:"Communication — demander", text:"Can you help me, please?", tip:"Question oui/non : l'intonation <b>monte</b> à la fin."},
+  {cat:"communication", catLabel:"Communication — demander", text:"What time is the meeting?", tip:"Question en WH- : l'intonation <b>descend</b> à la fin."},
+  {cat:"communication", catLabel:"Communication — au café", text:"I would like a coffee, please.", tip:"<b>Would :</b> le L ne se prononce pas — /wʊd/."},
+  {cat:"communication", catLabel:"Communication — en ville", text:"Where is the train station?", tip:"<b>Where :</b> le WH se prononce /w/."},
+  {cat:"communication", catLabel:"Communication — se présenter", text:"I live in Casablanca, in Morocco.", tip:"<b>Live :</b> /lɪv/, voyelle courte."},
+  {cat:"communication", catLabel:"Communication — clarifier", text:"I don't understand. Can you repeat, please?", tip:"<b>Don't :</b> le T final est doux, presque avalé."},
+  {cat:"communication", catLabel:"Communication — remercier", text:"Thank you very much for your help.", tip:"<b>Thank :</b> TH + voyelle nasale. Remercie avec le sourire !"},
+  {cat:"bac", catLabel:"Bac & idiomes — Jour 1", text:"Don't give up before the exam.", tip:"<b>Give up</b> = abandonner. Idiome du Jour 1 de la série TikTok @english.above.all."},
+  {cat:"bac", catLabel:"Bac & idiomes — Jour 20", text:"I know this lesson by heart.", tip:"<b>By heart</b> = par cœur. Idiome du Jour 20 de la série."},
+  {cat:"bac", catLabel:"Bac & idiomes — Jour 19", text:"She was over the moon when she passed the exam.", tip:"<b>Over the moon</b> = aux anges. Idiome du Jour 19 de la série."},
+  {cat:"bac", catLabel:"Bac & idiomes — Jour 17", text:"This book cost an arm and a leg.", tip:"<b>Cost an arm and a leg</b> = coûter très cher. Idiome du Jour 17 de la série."},
+  {cat:"bac", catLabel:"Bac — Unité 1 Éducation", text:"Education is the key to success.", tip:"Phrase type du Bac, Unité 1 : Éducation."},
+  {cat:"bac", catLabel:"Bac & idiomes — Jour 21", text:"I have to face the music and study tonight.", tip:"<b>Face the music</b> = affronter la réalité. Idiome du Jour 21 de la série."}
+];
+
+var PAIRS = [
+  {a:"ship", b:"sheep", tipA:"/ɪ/ court, bouche détendue.", tipB:"/iː/ long, souris en le disant.", note:"La paire la plus célèbre !"},
+  {a:"live", b:"leave", tipA:"/lɪv/ court.", tipB:"/liːv/ long.", note:"Live = vivre, leave = quitter."},
+  {a:"thin", b:"tin", tipA:"TH : langue entre les dents.", tipB:"T : langue derrière les dents.", note:"Thin = mince, tin = boîte de conserve."},
+  {a:"think", b:"sink", tipA:"TH soufflé entre les dents.", tipB:"S : comme un serpent.", note:"Think = penser, sink = couler."},
+  {a:"three", b:"tree", tipA:"TH + R, va lentement.", tipB:"TR : comme « tree », l'arbre.", note:"Three = trois, tree = arbre."},
+  {a:"hat", b:"hate", tipA:"/æ/ bouche bien ouverte.", tipB:"/eɪ/ comme « é » qui glisse.", note:"Hat = chapeau, hate = détester."},
+  {a:"full", b:"fool", tipA:"/ʊ/ court.", tipB:"/uː/ long, bouche arrondie.", note:"Full = plein, fool = idiot."},
+  {a:"cheap", b:"chip", tipA:"/tʃiː/ long.", tipB:"/tʃɪ/ court.", note:"Cheap = pas cher, chip = frite / puce."},
+  {a:"bad", b:"bed", tipA:"/æ/ ouvert.", tipB:"/e/ comme « è ».", note:"Bad = mauvais, bed = lit."},
+  {a:"sit", b:"seat", tipA:"/ɪ/ court.", tipB:"/iː/ long.", note:"Sit = s'asseoir, seat = siège."}
+];
+
+/* ---------- État ---------- */
+var state = {
+  accent: "en-US",
+  filter: "all",
+  phraseIndex: 0,
+  pairIndex: 0,
+  pairSide: "a",
+  custom: [],
+  customIndex: 0
+};
+try {
+  var saved = localStorage.getItem("pron_accent");
+  if (saved === "en-US" || saved === "en-GB") state.accent = saved;
+} catch (e) { /* stockage indisponible : on continue sans */ }
+
+function $(id){ return document.getElementById(id); }
+
+/* ---------- Normalisation & comparaison ---------- */
+function norm(s){
+  return s.toLowerCase()
+    .replace(/[’‘']/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function analyze(target, alts){
+  var targetWords = norm(target).split(" ").filter(Boolean);
+  var best = {};
+  norm(alts[0] || "").split(" ").forEach(function(w){ if(w) best[w] = true; });
+  var any = {};
+  alts.forEach(function(a){
+    norm(a).split(" ").forEach(function(w){ if(w) any[w] = true; });
+  });
+  var score = 0;
+  var chips = targetWords.map(function(w){
+    var status = best[w] ? "ok" : (any[w] ? "close" : "miss");
+    if (status === "ok") score += 1;
+    else if (status === "close") score += 0.5;
+    return {w:w, status:status};
+  });
+  var pct = targetWords.length ? Math.round(score / targetWords.length * 100) : 0;
+  return {chips:chips, pct:pct, total:targetWords.length};
+}
+function encouragement(pct){
+  if (pct === 100) return "🎉 Parfait ! Chaque mot a été compris. Passe à la phrase suivante !";
+  if (pct >= 80) return "👏 Très bien ! Encore un petit effort sur les mots en rouge.";
+  if (pct >= 50) return "💪 Bien ! Écoute le modèle une fois, puis réessaie lentement.";
+  return "🎧 Écoute le modèle, répète mot par mot, puis réessaie. Ça va venir !";
+}
+
+/* ---------- Voix modèle (Text-to-Speech) ---------- */
+function pickVoice(lang){
+  if (!("speechSynthesis" in window)) return null;
+  var voices = speechSynthesis.getVoices();
+  var exact = voices.filter(function(v){
+    return v.lang && v.lang.replace("_","-").toLowerCase() === lang.toLowerCase();
+  });
+  var pool = exact.length ? exact : voices.filter(function(v){
+    return v.lang && v.lang.toLowerCase().indexOf("en") === 0;
+  });
+  if (!pool.length) return null;
+  var preferred = pool.filter(function(v){ return /google|natural|samantha|daniel|serena|arthur/i.test(v.name); });
+  return preferred[0] || pool[0];
+}
+function speak(text){
+  if (!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = state.accent;
+  var v = pickVoice(state.accent);
+  if (v) u.voice = v;
+  u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+if ("speechSynthesis" in window) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = function(){ speechSynthesis.getVoices(); };
+}
+
+/* ---------- Reconnaissance vocale ---------- */
+var recognition = null;
+var listening = false;
+function speechSupported(){
+  return ("SpeechRecognition" in window) || ("webkitSpeechRecognition" in window);
+}
+function listenOnce(micBtn, alertEl, onHeard){
+  if (listening && recognition) { try { recognition.stop(); } catch(e){} return; }
+  if (!speechSupported()) {
+    showAlert(alertEl, "La reconnaissance vocale n'est pas disponible dans ce navigateur. Ouvre cette page dans Chrome (Android ou ordinateur) pour utiliser le micro.");
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = state.accent;
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 6;
+  listening = true;
+  micBtn.classList.add("listening");
+  micBtn.textContent = "🔴 Je t'écoute… parle maintenant";
+  hideAlert(alertEl);
+  recognition.onresult = function(e){
+    var alts = [];
+    for (var i = 0; i < e.results[0].length; i++) alts.push(e.results[0][i].transcript);
+    if (!alts.length) alts = [e.results[0][0].transcript];
+    onHeard(alts);
+  };
+  recognition.onerror = function(e){
+    if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+      showAlert(alertEl, "Le micro est bloqué. Autorise le micro pour ce site dans Chrome (icône cadenas à côté de l'adresse), puis réessaie.");
+    } else if (e.error === "no-speech") {
+      showAlert(alertEl, "Je n'ai rien entendu. Parle un peu plus fort, plus près du téléphone, et réessaie.");
+    } else if (e.error === "network") {
+      showAlert(alertEl, "Problème de connexion : la reconnaissance vocale a besoin d'Internet. Vérifie ta connexion et réessaie.");
+    } else if (e.error !== "aborted") {
+      showAlert(alertEl, "Le micro n'a pas fonctionné (" + e.error + "). Réessaie, ou ouvre la page dans Chrome.");
+    }
+  };
+  recognition.onend = function(){
+    listening = false;
+    micBtn.classList.remove("listening");
+    micBtn.textContent = micBtn.getAttribute("data-label");
+  };
+  try { recognition.start(); } catch(e){
+    listening = false;
+    micBtn.classList.remove("listening");
+    micBtn.textContent = micBtn.getAttribute("data-label");
+  }
+}
+function showAlert(el, msg){ el.textContent = msg; el.classList.add("show"); }
+function hideAlert(el){ el.classList.remove("show"); }
+
+/* ---------- Mode Phrases ---------- */
+function filteredPhrases(){
+  if (state.filter === "all") return PHRASES;
+  return PHRASES.filter(function(p){ return p.cat === state.filter; });
+}
+function renderPhrase(){
+  var list = filteredPhrases();
+  if (state.phraseIndex >= list.length) state.phraseIndex = 0;
+  var p = list[state.phraseIndex];
+  $("phraseCat").textContent = p.catLabel;
+  $("phraseText").textContent = p.text;
+  $("phraseTip").innerHTML = p.tip;
+  $("result").classList.remove("show");
+  hideAlert($("alert"));
+  $("progress").textContent = "Phrase " + (state.phraseIndex + 1) + " sur " + list.length;
+}
+function renderWordChips(container, chips){
+  container.innerHTML = "";
+  chips.forEach(function(c){
+    var s = document.createElement("span");
+    s.className = "word " + c.status;
+    s.textContent = c.w;
+    container.appendChild(s);
+  });
+}
+function showPhraseResult(alts, ids){
+  var target = $(ids.text).textContent;
+  var res = analyze(target, alts);
+  $(ids.heard).textContent = "« " + alts[0] + " »";
+  renderWordChips($(ids.chips), res.chips);
+  $(ids.fill).style.width = res.pct + "%";
+  $(ids.fill).style.background = res.pct >= 80 ? "var(--green)" : (res.pct >= 50 ? "var(--gold)" : "var(--red)");
+  $(ids.line).textContent = "Score : " + res.pct + " % des mots compris";
+  $(ids.enc).textContent = encouragement(res.pct);
+  $(ids.result).classList.add("show");
+}
+
+/* ---------- Mode Paires minimales ---------- */
+function renderPair(){
+  var p = PAIRS[state.pairIndex];
+  $("pairA").textContent = p.a;
+  $("pairB").textContent = p.b;
+  $("pairA").classList.toggle("active", state.pairSide === "a");
+  $("pairB").classList.toggle("active", state.pairSide === "b");
+  var tip = state.pairSide === "a" ? p.tipA : p.tipB;
+  $("pairTip").innerHTML = "<b>Mot choisi : " + (state.pairSide === "a" ? p.a : p.b) + "</b> — " + tip + " " + p.note;
+  $("resultPair").classList.remove("show");
+  hideAlert($("alertPair"));
+  $("progressPair").textContent = "Paire " + (state.pairIndex + 1) + " sur " + PAIRS.length;
+}
+function showPairResult(alts){
+  var p = PAIRS[state.pairIndex];
+  var target = state.pairSide === "a" ? p.a : p.b;
+  var other = state.pairSide === "a" ? p.b : p.a;
+  var heardNorm = norm(alts[0] || "");
+  var heardWords = heardNorm.split(" ");
+  $("heardPair").textContent = "« " + alts[0] + " »";
+  var tip = state.pairSide === "a" ? p.tipA : p.tipB;
+  if (heardWords.indexOf(target) !== -1) {
+    $("scorePair").textContent = "✅ Bravo ! Le mot « " + target + " » a été compris.";
+    $("encouragePair").textContent = "Essaie l'autre mot de la paire, puis passe à la suivante.";
+  } else if (heardWords.indexOf(other) !== -1) {
+    $("scorePair").textContent = "🔀 L'application a entendu « " + other + " » — c'est l'autre mot de la paire !";
+    $("encouragePair").textContent = "Réessaie « " + target + " » : " + tip;
+  } else {
+    $("scorePair").textContent = "❓ Le mot n'a pas été reconnu.";
+    $("encouragePair").textContent = "Écoute le modèle, puis dis « " + target + " » lentement et clairement : " + tip;
+  }
+  $("resultPair").classList.add("show");
+}
+
+/* ---------- Mode Mon texte ---------- */
+function splitSentences(text){
+  var parts = text.match(/[^.!?]+[.!?]+["”')\]]*/g) || [text];
+  return parts.map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 1; }).slice(0, 30);
+}
+function renderCustom(){
+  var s = state.custom[state.customIndex];
+  $("customPhrase").textContent = s;
+  $("resultCustom").classList.remove("show");
+  hideAlert($("alertCustom"));
+  $("progressCustom").textContent = "Phrase " + (state.customIndex + 1) + " sur " + state.custom.length;
+}
+
+/* ---------- Navigation & onglets ---------- */
+function setMode(mode){
+  $("tabPhrases").classList.toggle("active", mode === "phrases");
+  $("tabPaires").classList.toggle("active", mode === "paires");
+  $("tabTexte").classList.toggle("active", mode === "texte");
+  $("modePhrases").style.display = mode === "phrases" ? "" : "none";
+  $("modePaires").style.display = mode === "paires" ? "" : "none";
+  $("modeTexte").style.display = mode === "texte" ? "" : "none";
+  if (listening && recognition) { try { recognition.stop(); } catch(e){} }
+}
+function setAccent(accent){
+  state.accent = accent;
+  try { localStorage.setItem("pron_accent", accent); } catch(e){}
+  $("btnUS").classList.toggle("active", accent === "en-US");
+  $("btnUK").classList.toggle("active", accent === "en-GB");
+}
+
+/* ---------- Branchements ---------- */
+$("btnUS").addEventListener("click", function(){ setAccent("en-US"); });
+$("btnUK").addEventListener("click", function(){ setAccent("en-GB"); });
+$("tabPhrases").addEventListener("click", function(){ setMode("phrases"); });
+$("tabPaires").addEventListener("click", function(){ setMode("paires"); });
+$("tabTexte").addEventListener("click", function(){ setMode("texte"); });
+
+var filterBtns = document.querySelectorAll(".chip-filter");
+filterBtns.forEach(function(b){
+  b.addEventListener("click", function(){
+    filterBtns.forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    state.filter = b.getAttribute("data-filter");
+    state.phraseIndex = 0;
+    renderPhrase();
+  });
+});
+
+$("btnListen").addEventListener("click", function(){ speak($("phraseText").textContent); });
+$("btnMic").setAttribute("data-label", "🎤 Lire à voix haute");
+$("btnMic").addEventListener("click", function(){
+  listenOnce($("btnMic"), $("alert"), function(alts){
+    showPhraseResult(alts, {text:"phraseText", heard:"heardText", chips:"wordChips", fill:"scoreFill", line:"scoreLine", enc:"encourage", result:"result"});
+  });
+});
+$("btnPrev").addEventListener("click", function(){
+  var list = filteredPhrases();
+  state.phraseIndex = (state.phraseIndex - 1 + list.length) % list.length;
+  renderPhrase();
+});
+$("btnNext").addEventListener("click", function(){
+  var list = filteredPhrases();
+  state.phraseIndex = (state.phraseIndex + 1) % list.length;
+  renderPhrase();
+});
+
+$("pairA").addEventListener("click", function(){ state.pairSide = "a"; renderPair(); });
+$("pairB").addEventListener("click", function(){ state.pairSide = "b"; renderPair(); });
+$("btnListenPair").addEventListener("click", function(){
+  var p = PAIRS[state.pairIndex];
+  speak(state.pairSide === "a" ? p.a : p.b);
+});
+$("btnMicPair").setAttribute("data-label", "🎤 Dire le mot");
+$("btnMicPair").addEventListener("click", function(){
+  listenOnce($("btnMicPair"), $("alertPair"), showPairResult);
+});
+$("btnPrevPair").addEventListener("click", function(){
+  state.pairIndex = (state.pairIndex - 1 + PAIRS.length) % PAIRS.length;
+  renderPair();
+});
+$("btnNextPair").addEventListener("click", function(){
+  state.pairIndex = (state.pairIndex + 1) % PAIRS.length;
+  renderPair();
+});
+
+$("btnStartCustom").addEventListener("click", function(){
+  var text = $("customText").value.trim();
+  if (!text) { $("customText").focus(); return; }
+  state.custom = splitSentences(text);
+  state.customIndex = 0;
+  $("textEditor").style.display = "none";
+  $("textPractice").style.display = "";
+  renderCustom();
+});
+$("btnEditText").addEventListener("click", function(){
+  $("textPractice").style.display = "none";
+  $("textEditor").style.display = "";
+});
+$("btnListenCustom").addEventListener("click", function(){ speak($("customPhrase").textContent); });
+$("btnMicCustom").setAttribute("data-label", "🎤 Lire à voix haute");
+$("btnMicCustom").addEventListener("click", function(){
+  listenOnce($("btnMicCustom"), $("alertCustom"), function(alts){
+    showPhraseResult(alts, {text:"customPhrase", heard:"heardCustom", chips:"wordChipsCustom", fill:"scoreFillCustom", line:"scoreLineCustom", enc:"encourageCustom", result:"resultCustom"});
+  });
+});
+$("btnPrevCustom").addEventListener("click", function(){
+  state.customIndex = (state.customIndex - 1 + state.custom.length) % state.custom.length;
+  renderCustom();
+});
+$("btnNextCustom").addEventListener("click", function(){
+  state.customIndex = (state.customIndex + 1) % state.custom.length;
+  renderCustom();
+});
+
+/* ---------- Init ---------- */
+setAccent(state.accent);
+renderPhrase();
+renderPair();
+</script>
+</body>
+</html>
